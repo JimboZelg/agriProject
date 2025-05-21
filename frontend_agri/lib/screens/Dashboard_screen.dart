@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Dashboard_content.dart';
-import 'Empleados_content.dart';
+import 'empleados/Empleados_content.dart';
 import 'Nomina_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
