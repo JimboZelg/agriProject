@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
+import 'package:frontend_agri/screens/Login_screen.dart';
+import 'package:frontend_agri/screens/Nomina_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MainApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'AGRIBAR',
-      theme: ThemeData(primarySwatch: Colors.green),
-      routes: {
-        '/': (_) => const LoginScreen(),
-        '/register': (_) => const RegisterScreen(),
-        '/dashboard': (_) => Scaffold(appBar: AppBar(title: const Text('Dashboard')), body: const Center(child: Text('Bienvenido'))),
-      },
-    );
+    //return MaterialApp(home: const LoginScreen());
+    return MaterialApp(home: const NominaScreen());
   }
 }

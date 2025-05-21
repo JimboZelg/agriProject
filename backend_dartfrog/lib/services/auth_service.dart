@@ -1,12 +1,13 @@
 import 'package:bcrypt/bcrypt.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dotenv/dotenv.dart';
-import 'package:postgres/postgres.dart'; 
-import '../database/connection.dart';
+import 'package:postgres/postgres.dart';
+import 'package:dart_frog/dart_frog.dart';
 
 class AuthService {
-  static Future<String?> login(String username, String password) async {
+  static Future<String?> login(RequestContext context, String username, String password) async {
     final env = DotEnv()..load();
+    final db = context.read<Connection>(); // ✅ conexión inyectada
 
     final result = await db.execute(
       Sql.named(
@@ -34,8 +35,10 @@ class AuthService {
     );
   }
 
-  static Future<bool> register(String username, String password, String rol) async {
-    // Verificar si existe
+  static Future<bool> register(RequestContext context, String username, String password, String rol) async {
+    final db = context.read<Connection>(); // ✅ conexión inyectada
+
+    // Verificar si ya existe el usuario
     final existe = await db.execute(
       Sql.named(
         'SELECT id FROM usuarios WHERE nombre_usuario = @username',

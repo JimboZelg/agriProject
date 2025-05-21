@@ -1,18 +1,18 @@
 import 'package:postgres/postgres.dart';
 import 'package:bcrypt/bcrypt.dart';
-import '../database/connection.dart';
+import 'package:dart_frog/dart_frog.dart';
 
 class UsuarioService {
-  // Obtener todos los usuarios (excepto admin si quieres filtrarlo)
-  static Future<List<Map<String, dynamic>>> getAllUsuarios() async {
+  static Future<List<Map<String, dynamic>>> getAllUsuarios(RequestContext context) async {
+    final db = context.read<Connection>();
     final result = await db.execute(
       Sql.named('SELECT id, nombre_usuario, rol, activo, creado_en FROM usuarios'),
     );
     return result.map((row) => row.toColumnMap()).toList();
   }
 
-  // Obtener un usuario por ID
-  static Future<Map<String, dynamic>?> getUsuarioById(int id) async {
+  static Future<Map<String, dynamic>?> getUsuarioById(RequestContext context, int id) async {
+    final db = context.read<Connection>();
     final result = await db.execute(
       Sql.named('SELECT id, nombre_usuario, rol, activo, creado_en FROM usuarios WHERE id = @id'),
       parameters: {'id': id},
@@ -22,9 +22,14 @@ class UsuarioService {
     return result.first.toColumnMap();
   }
 
-  // Crear usuario (solo admin puede)
-  static Future<bool> createUsuario(String username, String password, String rol) async {
-    // Verificar si ya existe
+  static Future<bool> createUsuario(
+    RequestContext context,
+    String username,
+    String password,
+    String rol,
+  ) async {
+    final db = context.read<Connection>();
+
     final existe = await db.execute(
       Sql.named('SELECT id FROM usuarios WHERE nombre_usuario = @username'),
       parameters: {'username': username},
@@ -51,16 +56,16 @@ class UsuarioService {
     return true;
   }
 
-  // Deshabilitar temporalmente a un usuario 
-  static Future<void> disableUsuario(int id) async {
+  static Future<void> disableUsuario(RequestContext context, int id) async {
+    final db = context.read<Connection>();
     await db.execute(
       Sql.named('UPDATE usuarios SET activo = false WHERE id = @id'),
       parameters: {'id': id},
     );
   }
 
-  // Habilitar un usuario
-  static Future<void> enableUsuario(int id) async {
+  static Future<void> enableUsuario(RequestContext context, int id) async {
+    final db = context.read<Connection>();
     await db.execute(
       Sql.named('UPDATE usuarios SET activo = true WHERE id = @id'),
       parameters: {'id': id},
